@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TDG</title>
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+
+    <style>
+        #tdg_box {
+            height: 200px;
+            width: 200px;
+            background: black;
+            cursor: pointer;
+        }
+
+        button,
+        input[type="submit"],
+        input[type="reset"] {
+            background: none;
+            color: inherit;
+            border: none;
+            padding: 0;
+            font: inherit;
+            cursor: pointer;
+            outline: inherit;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1>Button clicking game</h1>
+        <p>
+            The game will start once you press the red box. If you dont click the box it becomes red again, and the
+            timer stops. To complete the game you must get the timer to 0.
+        </p>
+        <p>Finish to get chance to win gift card $20.</p>
+        <br />
+        <p id="timer"></p>
+        <button id="tdg_box"></button>
+    </div>
+</body>
+<script>
+    let time = {{initial_time}}
+    function formatAsMinutes(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        let remainingSeconds = (seconds % 60).toFixed(2);
+
+        let [integerPart, decimalPart] = remainingSeconds.split('.');
+        if (remainingSeconds == 0.0) {
+            remainingSeconds = 0
+        }
+
+        return `${minutes}:${integerPart.padStart(2, "0")}.${decimalPart.padStart(2, "0")}`;
+    }
+    function updateTimer(seconds) {
+        document.getElementById("timer").innerHTML = `You have <strong>${formatAsMinutes(seconds)}</strong> remaining`
+    }
+
+    const BASE_RGB = [255, 0, 0]
+    const STEPS_UNTIL_RED = 255 * 2
+    const STEP = STEPS_UNTIL_RED / (3000 / 10)
+
+    let since_click_timeout = null;
+    let decrement_interval = null;
+
+    let colordown = 0
+
+    function updateColor(colordown) {
+        let rounded_colordown = Math.round(colordown)
+        let first_phase = rounded_colordown <= 255
+        let rgb = null;
+        if (first_phase) {
+            rgb = [255, rounded_colordown, 0]
+        } else {
+            rgb = [255 - (rounded_colordown - 255), 255, 0]
+        }
+        console.log(colordown)
+        document.getElementById("tdg_box").style.background = `rgb(${rgb[0]}, ${rgb[1]}, 0)`
+    }
+
+
+    function decrementTime() {
+        time = time - 0.01
+        if (time <= 0) {
+            checkForClick()
+            window.location.replace('/complete')
+            return
+        }
+        colordown -= STEP
+        updateColor(colordown);
+        updateTimer(time);
+    }
+
+    function checkForClick() {
+        clearInterval(decrement_interval)
+        decrement_interval = null;
+        since_click_timeout = null;
+        let colordown = 0;
+    }
+
+    function handleClick(e) {
+        colordown = STEPS_UNTIL_RED
+        if (since_click_timeout) {
+            clearTimeout(since_click_timeout)
+        }
+        if (!decrement_interval) {
+            decrement_interval = setInterval(decrementTime, 10)
+        }
+        since_click_timeout = setTimeout(checkForClick, 3000)
+    }
+    updateTimer(time)
+    updateColor(colordown)
+    document.getElementById("tdg_box").addEventListener("click", handleClick);
+</script>
+
+</html>

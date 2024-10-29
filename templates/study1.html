@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      input.parsley-success,
+      select.parsley-success,
+      textarea.parsley-success {
+        color: #468847;
+        background-color: #dff0d8;
+        border: 1px solid #d6e9c6;
+      }
+
+      input.parsley-error,
+      select.parsley-error,
+      textarea.parsley-error {
+        color: #b94a48;
+        background-color: #f2dede;
+        border: 1px solid #eed3d7;
+      }
+
+      .parsley-errors-list {
+        margin: 2px 0 3px;
+        padding: 0;
+        list-style-type: none;
+        font-size: 0.9em;
+        line-height: 0.9em;
+        opacity: 0;
+        color: #b94a48;
+
+        transition: all 0.3s ease-in;
+        -o-transition: all 0.3s ease-in;
+        -moz-transition: all 0.3s ease-in;
+        -webkit-transition: all 0.3s ease-in;
+      }
+
+      .parsley-errors-list.filled {
+        opacity: 1;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container mt-3 mb-5">
+      <h1 class="text-center">Social Class Ladder</h1>
+      <p>
+        Think of the ladder below as representing the population in your country
+        in terms of <bold>socioeconomic status (SES)</bold>. Socioeconomic status can
+        include factors such as income, education level, occupation, and overall
+        quality of life.
+      </p>
+      <p>Where would you place yourself on this ladder?</p>
+
+      <form
+        id="form"
+        action="{{ url_for('time_game_allocation') }}"
+        method="POST"
+        data-parsley-validate
+      >
+        <div class="ladder text-center">
+          <img
+            src="{{ url_for('static', filename='ladder_1.png') }}"
+            alt="Ladder"
+            class="img-fluid"
+            style="height: 400px"
+          />
+        </div>
+
+        <div class="form-group ladder-rungs">
+          <label for="ladder-position"
+            >Select your position on the ladder (1 = bottom, 10 = top):</label
+          >
+          <select
+            class="form-control d-inline-block w-auto"
+            id="ladder-position"
+            name="ladder_position"
+            required
+            data-parsley-required-message="Please select a rung on the ladder"
+          >
+            <option value="">Select...</option>
+            <option value="10">10</option>
+            <option value="9">9</option>
+            <option value="8">8</option>
+            <option value="7">7</option>
+            <option value="6">6</option>
+            <option value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="control_question"
+            >What’s one small thing that always makes your day better? Write no
+            more than five sentences.</label
+          >
+          <textarea
+            class="form-control"
+            id="control_question"
+            name="control_question"
+            rows="5"
+            maxlength="500"
+            required
+            data-parsley-required-message="Please provide your reflection"
+            data-parsley-maxlength="500"
+          ></textarea>
+          <small class="form-text text-muted">Maximum 500 characters.</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Submit</button>
+      </form>
+    </div>
+
+    <script>
+      // Initialize Parsley for form validation
+      $(document).ready(function () {
+        $("#form").parsley();
+      });
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.9.2/parsley.min.js"></script>
+  </body>
+</html>

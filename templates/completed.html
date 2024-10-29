@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Completed</title>
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        textarea {
+            resize: none;
+            width: 300px;
+            height: 30px;
+        }
+        strong {
+            font-size: 25px;
+            font-weight: 500;
+        }
+        #key_row {
+            display: flex;
+            align-items: center;
+            column-gap: 3px;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <p style="text-align: center">
+            Thank you for completing this survey! Please note down November 1st 2024
+            in your calendar and check back on this website, keep this key in your
+            notes, if you won the key will give you the code to the gift card.
+        </p>
+        <div id="key_row"><strong>Key:</strong><textarea disabled>{{ unique_key }}</textarea></div>
+    </div>
+</body>
+
+</html>

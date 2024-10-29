@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title></title>
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.9.2/parsley.css" rel="stylesheet" />
+
+    <style>
+        input.parsley-success,
+        select.parsley-success,
+        textarea.parsley-success {
+            color: #468847;
+            background-color: #dff0d8;
+            border: 1px solid #d6e9c6;
+        }
+
+        input.parsley-error,
+        select.parsley-error,
+        textarea.parsley-error {
+            color: #b94a48;
+            background-color: #f2dede;
+            border: 1px solid #eed3d7;
+        }
+
+        .parsley-errors-list {
+            margin: 2px 0 3px;
+            padding: 0;
+            list-style-type: none;
+            font-size: 0.9em;
+            line-height: 0.9em;
+            opacity: 0;
+            color: #b94a48;
+
+            transition: all 0.3s ease-in;
+            -o-transition: all 0.3s ease-in;
+            -moz-transition: all 0.3s ease-in;
+            -webkit-transition: all 0.3s ease-in;
+        }
+
+        .parsley-errors-list.filled {
+            opacity: 1;
+        }
+
+        .hide-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 0;
+            /* Remove width */
+            height: 0;
+            /* Remove height */
+            background: transparent;
+            /* Make background transparent */
+            border: none;
+            /* Remove border */
+        }
+
+        /* Hide the thumb for Firefox */
+        .hide-slider::-moz-range-thumb {
+            width: 0;
+            height: 0;
+            background: transparent;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-3 mb-5">
+
+        <h1 class="text-center">Task Explanation: Button Clicking Survey</h1>
+        <p>You have a task ahead of you that involves clicking a button for a total of <strong>2 minutes (120
+                seconds)</strong>. However you have the opportunity to offload a part of the task to the next person
+            answering this survey:</p>
+
+        <ol>
+            <li><strong>Your Role:</strong> You need to decide how much time you want to give to the next person in the
+                survey while you complete your own time. You can choose any percentage from <strong>0% to 100%</strong>.
+            </li>
+            <li><strong>How Time is Split:</strong>
+                <ul>
+                    <li><strong>Your Time:</strong> The time you allocate to the next person will be subtracted from
+                        your own time.</li>
+                    <li><strong>Next Person's Time:</strong> The percentage you choose will determine how long the next
+                        person will need to click the button.</li>
+                </ul>
+            </li>
+            <li>
+                After submitting your allocation, you will in addition receive the time the previous respondent
+                gave to you.
+            </li>
+        </ol>
+        <!-- <p>What is your decision?</p> -->
+        <i>Click on the track and use the slider which then appears to adjust the percentage you allocate to the
+            next person.</i>
+        <p id="allocation"></p>
+        <!-- <small class="text-center">Percentage of the task which will be completed by the next respondent</small> -->
+        <form id="sliderForm" action="{{ url_for('time_game') }}" method="POST" data-parsley-validate>
+            <div class="form-group">
+                <label for="percentage">Select a percentage:</label>
+                <input type="range" class="custom-range hide-slider" id="percentage" name="percentage" min="0" max="100"
+                    value="50" oninput="updateSliderValue(this.value)" required
+                    data-parsley-required-message="Please select a percentage" data-parsley-range="[0,100]" />
+                <span class="slider-value" id="sliderValue"></span>
+            </div>
+
+            <button type="submit" id="submit_button" disabled="true" class="btn btn-primary btn-block">Submit</button>
+        </form>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.9.2/parsley.min.js"></script>
+</body>
+
+</html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.9.2/parsley.min.js"></script>
+<script>
+    function formatAsMinutes(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = Math.round(seconds % 60);
+
+        // Ensure the seconds are always two digits
+        const formattedSeconds = remainingSeconds.toString().padStart(2, '0');
+
+        return `${minutes}:${formattedSeconds}`;
+    }
+    function updateSliderValue(value) {
+        document.getElementById("submit_button").disabled = false;
+        document.getElementById("percentage").classList.remove('hide-slider');
+        let slider_percentage = `${value}% (<strong>${formatAsMinutes(2 * 60 * (value / 100))} minutes)</strong>`;
+        let percentage = value + "%"
+
+        document.getElementById("sliderValue").innerHTML = slider_percentage;
+        document.getElementById("allocation").innerHTML = `<br/><h5>Current scenario:</h5>Your current choice means the next respondent has to fullfill the task for <strong>${percentage} of the time (${formatAsMinutes(2 * 60 * (value / 100))} minutes) in addition to what they allocate to themselves</strong> while you fulfill the task for <strong>${100 - value}% of the time (${formatAsMinutes(2 * 60 * ((100 - value) / 100))} minutes) in addition to what was allocated to you by the previous respondent</strong>`
+    }
+
+    // Initialize Parsley for form validation
+    $(document).ready(function () {
+        $("#sliderForm").parsley();
+    });
+</script>
+</body>
+
+</html>
